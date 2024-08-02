@@ -5,7 +5,9 @@ const app = express();
 const port = process.env.PORT || 3001;
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: 'https://bajaj-fin-serv-test.vercel.app'
+}));
 
 const user = {
   user_id: "aluri_dev_ananth_22032004",
