@@ -15,7 +15,7 @@ const DataProcessor = () => {
   const handleSubmit = async () => {
     try {
       const parsedInput = JSON.parse(jsonInput);
-      const res = await fetch('https://backend-q3l2mknnx-aluri-dev-ananths-projects.vercel.app/bfhl', {
+      const res = await fetch('https://bajajbackend-jet.vercel.app/bfhl', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(parsedInput),
