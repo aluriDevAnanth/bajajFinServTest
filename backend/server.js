@@ -34,31 +34,49 @@ const findHighestAlphabet = (alphabets) => {
   return [alphabets[alphabets.length - 1]];
 };
 
-app.post('/bfhl', (req, res) => {
-  const { data } = req.body;
+app.post('/bfhl', upload.single('file'), (req, res) => {
+  const { data, file_b64 } = req.body;
+
   if (!data || !Array.isArray(data)) {
-    return res.status(400).json({ is_success: false, message: "Invalid data format" });
+    return res.status(400).json({ is_success: false, message: "Invalid input" });
   }
 
-  const { numbers, alphabets } = separateData(data);
-  const highest_alphabet = findHighestAlphabet(alphabets);
+  const numbers = data.filter(item => /^\d+$/.test(item));
+  const alphabets = data.filter(item => /^[a-zA-Z]$/.test(item));
+  const lowestLowercase = data.filter(item => item.match(/[a-z]/));
+  const highestLowercaseChar = lowestLowercase.length ? [Math.max(...lowestLowercase.map(c => c.charCodeAt(0)))].map(c => String.fromCharCode(c)) : [];
+
+  const file = req.file;
+  let fileValid = false;
+  let fileMimeType = null;
+  let fileSizeKb = 0;
+
+  if (file_b64) {
+    fileValid = true;
+    fileMimeType = file ? file.mimetype : "application/octet-stream";
+    fileSizeKb = file ? (file.size / 1024).toFixed(2) : 0;
+  }
 
   const response = {
     is_success: true,
-    user_id: user.user_id,
-    email: user.email,
-    roll_number: user.roll_number,
-    numbers,
-    alphabets,
-    highest_alphabet
+    user_id: userId,
+    email: email,
+    roll_number: rollNumber,
+    numbers: numbers,
+    alphabets: alphabets,
+    highest_lowercase_alphabet: highestLowercaseChar,
+    file_valid: fileValid,
+    file_mime_type: fileMimeType,
+    file_size_kb: fileSizeKb,
   };
 
-  res.json(response);
+  return res.json(response);
 });
 
 app.get('/bfhl', (req, res) => {
-  res.json({ operation_code: 1 });
+  return res.status(200).json({ operation_code: 1 });
 });
+
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
