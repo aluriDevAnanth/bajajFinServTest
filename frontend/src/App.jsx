@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { MultiSelect } from 'primereact/multiselect';
-import 'primereact/resources/themes/saga-blue/theme.css';
+import Select from 'react-select';
 
 const DataProcessor = () => {
   const [jsonInput, setJsonInput] = useState('');
@@ -25,28 +24,22 @@ const DataProcessor = () => {
       setResponse(data);
       setError('');
     } catch (err) {
-      console.log(err)
+      console.log(err);
       setError(`Invalid JSON input: ${err}`);
     }
   };
 
-  const handleOptionChange = (e) => {
-    setSelectedOptions(e.value);
+  const handleOptionChange = (selected) => {
+    setSelectedOptions(selected);
   };
 
   const renderResponse = () => {
     if (!response) return null;
 
     const displayData = {};
-    if (selectedOptions.includes('Alphabets')) {
-      displayData.Alphabets = response.alphabets;
-    }
-    if (selectedOptions.includes('Numbers')) {
-      displayData.Numbers = response.numbers;
-    }
-    if (selectedOptions.includes('Highest alphabet')) {
-      displayData['Highest alphabet'] = response.highest_alphabet;
-    }
+    selectedOptions.forEach(option => {
+      displayData[option.label] = response[option.value.toLowerCase()];
+    });
 
     return (
       <div>
@@ -56,21 +49,34 @@ const DataProcessor = () => {
     );
   };
 
+  const options = [
+    { value: 'alphabets', label: 'Alphabets' },
+    { value: 'numbers', label: 'Numbers' },
+    { value: 'highest_lowercase_alphabet', label: 'Highest alphabet' },
+  ];
+
   return (
-    <div className="container-fluid  h-100  h-100">
-      <h1 className="  mb-4">Bajaj Finserv Test by AP21110010255, aluri dev ananth.</h1>
-      <textarea className="form-control mb-3" rows="4" value={jsonInput} onChange={handleInputChange} placeholder='Enter JSON: { "data": ["A","C","z"] }' />
-      <div>  <button className="btn btn-primary mb-3" onClick={handleSubmit}>     Submit   </button>   </div>
+    <div className="container-fluid h-100">
+      <h1 className="mb-4">Bajaj Finserv Test by AP21110010255, Aluri Dev Ananth.</h1>
+      <textarea
+        className="  mb-3"
+        rows="6"
+        value={jsonInput}
+        onChange={handleInputChange}
+        placeholder='Enter JSON: { "data": ["A","C","z"] }'
+      />
+      <div>
+        <button className="btn btn-primary mb-3" onClick={handleSubmit}>Submit</button>
+      </div>
       {error && <p className="text-danger">{error}</p>}
       {response && (
         <>
           <label htmlFor="options" className="form-label">Select data to display:</label>
-          <MultiSelect
-            value={selectedOptions}
-            options={[{ label: 'Alphabets', value: 'Alphabets' }, { label: 'Numbers', value: 'Numbers' }, { label: 'Highest alphabet', value: 'Highest alphabet' }]}
+          <Select
+            isMulti
+            options={options}
             onChange={handleOptionChange}
             placeholder="Select data"
-            display="chip"
             className="w-100 mb-3"
           />
         </>
