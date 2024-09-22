@@ -3,12 +3,13 @@ const multer = require('multer');
 const cors = require('cors');
 
 const app = express();
-const port = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
 app.use(cors({
   origin: 'https://bajaj-fin-serv-test.vercel.app/'
 }));
+const upload = multer();
 
 const userId = "AluriDevAnanth";
 const email = "devananth_aluri@srmap.edu.in";
