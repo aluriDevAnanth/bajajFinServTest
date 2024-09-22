@@ -1,4 +1,5 @@
 const express = require('express');
+const multer = require('multer');
 const cors = require('cors');
 
 const app = express();
@@ -9,30 +10,9 @@ app.use(cors({
   origin: 'https://bajaj-fin-serv-test.vercel.app/'
 }));
 
-const user = {
-  user_id: "aluri_dev_ananth_22032004",
-  email: "devananth_aluri@srmap.edu.in",
-  roll_number: "AP21110010255"
-};
-
-const separateData = (data) => {
-  const numbers = [];
-  const alphabets = [];
-  data.forEach(item => {
-    if (!isNaN(item)) {
-      numbers.push(item);
-    } else {
-      alphabets.push(item);
-    }
-  });
-  return { numbers, alphabets };
-};
-
-const findHighestAlphabet = (alphabets) => {
-  if (alphabets.length === 0) return [];
-  alphabets.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
-  return [alphabets[alphabets.length - 1]];
-};
+const userId = "AluriDevAnanth";
+const email = "devananth_aluri@srmap.edu.in";
+const rollNumber = "AP21110010255";
 
 app.post('/bfhl', upload.single('file'), (req, res) => {
   const { data, file_b64 } = req.body;
@@ -77,7 +57,6 @@ app.get('/bfhl', (req, res) => {
   return res.status(200).json({ operation_code: 1 });
 });
 
-
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
