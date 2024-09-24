@@ -7,7 +7,9 @@ const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
 app.use(cors({
-  origin: 'https://bajaj-fin-serv-test.vercel.app/'
+  origin: 'https://bajaj-fin-serv-test.vercel.app',
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type'],
 }));
 const upload = multer();
 
