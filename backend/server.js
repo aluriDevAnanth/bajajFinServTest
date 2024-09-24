@@ -73,6 +73,4 @@ app.get('/bfhl', (req, res) => {
   return res.status(200).json({ operation_code: 1 });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+module.exports = app;
