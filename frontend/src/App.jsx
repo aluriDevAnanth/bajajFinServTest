@@ -14,13 +14,15 @@ const DataProcessor = () => {
   const handleSubmit = async () => {
     try {
       const parsedInput = JSON.parse(jsonInput);
-      const res = await fetch('https://bajajfinservtest-i3wv.onrender.com/bfhl', {
+      const res = await fetch(`${import.meta.env.backendUrl || `http://localhost:3001`}/bfhl`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(parsedInput),
       });
 
       const data = await res.json();
+      console.log(data);
+
       setResponse(data);
       setError('');
     } catch (err) {
@@ -59,7 +61,7 @@ const DataProcessor = () => {
     <div className="container-fluid h-100">
       <h1 className="mb-4">Bajaj Finserv Test by AP21110010255, Aluri Dev Ananth.</h1>
       <textarea
-        className="  mb-3"
+        className="form-control mb-3"
         rows="6"
         value={jsonInput}
         onChange={handleInputChange}

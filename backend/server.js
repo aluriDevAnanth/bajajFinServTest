@@ -1,23 +1,20 @@
 const express = require('express');
-const multer = require('multer');
 const cors = require('cors');
+require('dotenv').config()
+
+console.log(process.env.frontendUrl)
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
-app.use(cors({
-  origin: 'https://bajaj-fin-serv-test.vercel.app',
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type'],
-}));
-const upload = multer();
+app.use(cors({ origin: process.env.frontendUrl || '*' }));
 
 const userId = "AluriDevAnanth";
 const email = "devananth_aluri@srmap.edu.in";
 const rollNumber = "AP21110010255";
 
-app.post('/bfhl', upload.single('file'), (req, res) => {
+app.post('/bfhl', (req, res) => {
   const { data, file_b64 } = req.body;
 
   if (!data || !Array.isArray(data)) {
@@ -27,23 +24,39 @@ app.post('/bfhl', upload.single('file'), (req, res) => {
   const numbers = data.filter(item => /^\d+$/.test(item));
   const alphabets = data.filter(item => /^[a-zA-Z]$/.test(item));
   const lowestLowercase = data.filter(item => item.match(/[a-z]/));
-  const highestLowercaseChar = lowestLowercase.length ? [Math.max(...lowestLowercase.map(c => c.charCodeAt(0)))].map(c => String.fromCharCode(c)) : [];
+  const highestLowercaseChar = lowestLowercase.length
+    ? [Math.max(...lowestLowercase.map(c => c.charCodeAt(0)))].map(c => String.fromCharCode(c))
+    : [];
 
-  const file = req.file;
   let fileValid = false;
   let fileMimeType = null;
   let fileSizeKb = 0;
 
   if (file_b64) {
-    fileValid = true;
-    fileMimeType = file ? file.mimetype : "application/octet-stream";
-    fileSizeKb = file ? (file.size / 1024).toFixed(2) : 0;
+    try {
+      const base64Regex = /^data:(.+);base64,(.*)$/;
+      const matches = file_b64.match(base64Regex);
+
+      console.log(matches);
+
+      fileMimeType = matches[1];
+      const base64Data = matches[2];
+
+      const fileBuffer = Buffer.from(base64Data, 'base64');
+
+      fileValid = true;
+      fileSizeKb = (fileBuffer.length / 1024).toFixed(2);
+
+    } catch (err) {
+      console.error('Error processing file_b64:', err);
+      return res.status(500).json({ is_success: false, message: 'Error processing base64 file' });
+    }
   }
 
   const response = {
     is_success: true,
     user_id: userId,
-    email: email,
+    email,
     roll_number: rollNumber,
     numbers: numbers,
     alphabets: alphabets,
