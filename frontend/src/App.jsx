@@ -14,7 +14,7 @@ const DataProcessor = () => {
   const handleSubmit = async () => {
     try {
       const parsedInput = JSON.parse(jsonInput);
-      const res = await fetch(`${import.meta.env.backendUrl || `http://localhost:3001`}/bfhl`, {
+      const res = await fetch(`${import.meta.env.backendUrl}/bfhl`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(parsedInput),
